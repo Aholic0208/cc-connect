@@ -15,6 +15,7 @@ import (
 	"time"
 
 	"github.com/chenhg5/cc-connect/config"
+	"github.com/chenhg5/cc-connect/core"
 	qrterminal "github.com/mdp/qrterminal/v3"
 	"rsc.io/qr"
 )
@@ -267,7 +268,7 @@ func fetchBotOpenIDForSetup(appID, appSecret, platformType string) string {
 	}
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := core.NewHTTPClientWithCerts(10 * time.Second)
 	resp, err := client.Do(req)
 	if err != nil {
 		return ""
@@ -506,7 +507,7 @@ func validateAppCredentialsAgainstBase(baseURL, appID, appSecret string) (bool, 
 	}
 	req.Header.Set("Content-Type", "application/json")
 
-	client := &http.Client{Timeout: 10 * time.Second}
+	client := core.NewHTTPClientWithCerts(10 * time.Second)
 	resp, err := client.Do(req)
 	if err != nil {
 		return false, err
@@ -537,7 +538,7 @@ func runRegistrationFlow(opts registrationFlowOptions) (*registrationFlowResult,
 	}
 	client := &registrationClient{
 		baseURL: accountsFeishuBaseURL,
-		http:    &http.Client{Timeout: 15 * time.Second},
+		http:    core.NewHTTPClientWithCerts(15 * time.Second),
 		debug:   opts.Debug,
 	}
 

@@ -251,6 +251,7 @@ func newPlatform(name, domain string, opts map[string]any) (core.Platform, error
 	encryptKey, _ := opts["encrypt_key"].(string)
 
 	var clientOpts []lark.ClientOptionFunc
+	clientOpts = append(clientOpts, lark.WithHttpClient(core.NewHTTPClientWithCerts(30*time.Second)))
 	if domain != lark.FeishuBaseUrl {
 		clientOpts = append(clientOpts, lark.WithOpenBaseUrl(domain))
 	}
@@ -2847,7 +2848,10 @@ func (p *Platform) replayAPIClient() *lark.Client {
 
 func newFeishuReplayClient(appID, appSecret, domain string) *lark.Client {
 	var opts []lark.ClientOptionFunc
-	opts = append(opts, lark.WithEnableTokenCache(false))
+	opts = append(opts,
+		lark.WithEnableTokenCache(false),
+		lark.WithHttpClient(core.NewHTTPClientWithCerts(30*time.Second)),
+	)
 	if domain != "" && domain != lark.FeishuBaseUrl {
 		opts = append(opts, lark.WithOpenBaseUrl(domain))
 	}
